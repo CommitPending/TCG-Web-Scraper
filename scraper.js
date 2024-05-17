@@ -26,7 +26,6 @@ let pokemonList = [{
     desiredPrice: 200,
     emailSent: false
 },
-,
 {
     cardName: 'Raikou (13) - Neo Revelation (N3)',
     url: 'https://www.tcgplayer.com/product/88529/pokemon-neo-revelation-raikou-13?Condition=Lightly+Played&Language=English&page=1&Printing=1st+Edition+Holofoil',
@@ -120,22 +119,25 @@ async function scrapeAndCheck(url, desiredPrice, cardCon,cardName, index) {
 
     const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
+    try {
+        
     for (let i = 0; i < numberPrices.length; i++) {
         if ( pokemonList[index].emailSent == false && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
             console.log('a card was found under the desired price');
             sendEmail(process.env.SEND_EMAIL, `Price Alert - ${cardName} - $${desiredPrice}`, `The card ${cardName} is going for $${desiredPrice} on ${url}`);
-            elementExists = true;
             pokemonList[index].emailSent = true;
 
             console.log( "Email sent: " , pokemonList);
             break;
-        }else{
-            console.log('No cards found under the desired price');
         }
     }
 
 
     await browser.close();
+} catch (error) {
+    console.log('Error: ', error);
+    await browser.close();
+}
 }
 
 function sendEmail(to, subject, text) {
