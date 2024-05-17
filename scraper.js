@@ -104,12 +104,16 @@ let pokemonList = [{
 
 
 async function scrapeAndCheck(url, desiredPrice, cardCon,cardName, index) {
-    const browser = await puppeteer.launch();
+ try{
+    const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser', 
+        args: ['--no-sandbox'],
+        timeout: 60000,
+      });
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
     await page.goto(url, { waitUntil: 'networkidle0' });
-
 
 
     const [prices, cardCondition] = await Promise.all([
@@ -119,8 +123,6 @@ async function scrapeAndCheck(url, desiredPrice, cardCon,cardName, index) {
 
     const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
-    try {
-        
     for (let i = 0; i < numberPrices.length; i++) {
         if ( pokemonList[index].emailSent == false && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
             console.log('a card was found under the desired price');
@@ -133,11 +135,16 @@ async function scrapeAndCheck(url, desiredPrice, cardCon,cardName, index) {
     }
 
 
-    await browser.close();
-} catch (error) {
-    console.log('Error: ', error);
-    await browser.close();
-}
+ } catch (error) {
+
+    console.log(error);
+    browser.close();
+ }  
+    
+
+
+
+
 }
 
 function sendEmail(to, subject, text) {
