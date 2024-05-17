@@ -97,51 +97,46 @@ let pokemonList = [{
     lanuage: 'English',
     desiredPrice: 40,
     emailSent: false
-},
+}
 ];
 
 
 
-async function scrapeAndCheck(url, desiredPrice, cardCon,cardName, index) {
- try{
-    const browser = await puppeteer.launch({
-        executablePath: '/usr/bin/chromium-browser', 
-        args: ['--no-sandbox'],
-        timeout: 60000,
-      });
-    const page = await browser.newPage();
+async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
+    try {
+        const browser = await puppeteer.launch({
+            executablePath: '/usr/bin/chromium-browser', 
+            args: ['--no-sandbox'],
+            timeout: 90000, 
+          });
+      
 
-    await page.setJavaScriptEnabled(true);
-    await page.goto(url, { waitUntil: 'networkidle0' });
+        const page = await browser.newPage();
 
+        await page.setJavaScriptEnabled(true);
+        await page.goto(url, { waitUntil: 'networkidle0' });
 
-    const [prices, cardCondition] = await Promise.all([
-        page.$$eval('.listing-item__listing-data__info__price', elements => elements.map(element => element.textContent)),
-        page.$$eval('a[href="https://help.tcgplayer.com/hc/en-us/articles/221430307-Card-Condition-Guide"]', elements => elements.map(element => element.textContent))
-    ]);
+        const [prices, cardCondition] = await Promise.all([
+            page.$$eval('.listing-item__listing-data__info__price', elements => elements.map(element => element.textContent)),
+            page.$$eval('a[href="https://help.tcgplayer.com/hc/en-us/articles/221430307-Card-Condition-Guide"]', elements => elements.map(element => element.textContent))
+        ]);
 
-    const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
+        const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
-    for (let i = 0; i < numberPrices.length; i++) {
-        if ( pokemonList[index].emailSent == false && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
-            console.log('a card was found under the desired price');
-            sendEmail(process.env.SEND_EMAIL, `Price Alert - ${cardName} - $${desiredPrice}`, `The card ${cardName} is going for $${desiredPrice} on ${url}`);
-            pokemonList[index].emailSent = true;
-
-            console.log( "Email sent: " , pokemonList);
-            break;
+        for (let i = 0; i < numberPrices.length; i++) {
+            if (pokemonList[index].emailSent == false && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
+                console.log('A card was found under the desired price');
+                sendEmail(process.env.SEND_EMAIL, `Price Alert - ${cardName} - $${desiredPrice}`, `The card ${cardName} is going for $${desiredPrice} on ${url}`);
+                pokemonList[index].emailSent = true;
+                console.log("Email sent: ", pokemonList);
+                break;
+            }
         }
+
+        await browser.close();
+    } catch (error) {
+        console.error('Error during scraping:', error);
     }
-
-
- } catch (error) {
-    console.log(error);
- }  
-    
-
-
-
-
 }
 
 function sendEmail(to, subject, text) {
@@ -171,14 +166,17 @@ function sendEmail(to, subject, text) {
 
 
 
+let currentIndex = 0;
 
-
-function runScrapingRandomly() {
+async function runScrapingRandomly() {
     const randomInterval = Math.floor(Math.random() * (45 - 15 + 1) + 15) * 1000; 
-    const randomIndex = Math.floor(Math.random() * pokemonList.length);
-    const { url, desiredPrice, cardCondition, cardName } = pokemonList[randomIndex];
+    const { url, desiredPrice, cardCondition, cardName } = pokemonList[currentIndex];
 
-    scrapeAndCheck(url, desiredPrice, cardCondition, cardName, randomIndex);
+    await scrapeAndCheck(url, desiredPrice, cardCondition, cardName, currentIndex);
+    console.log("Current index: ", currentIndex);
+    console.log("Current card: ", pokemonList[currentIndex]);
+
+    currentIndex = (currentIndex + 1) % pokemonList.length;
     setTimeout(runScrapingRandomly, randomInterval);
 }
 
