@@ -66,7 +66,6 @@ let pokemonList = [{
     desiredPrice: 50,
     emailSent: false
 },
-,
 {
     cardName: 'Houndour (5) - Neo Discovery (N2)',
     url: 'https://www.tcgplayer.com/product/86216/pokemon-neo-discovery-houndour-5?Condition=Lightly+Played&Language=English&page=1&Printing=1st+Edition+Holofoil',
@@ -136,9 +135,7 @@ async function scrapeAndCheck(url, desiredPrice, cardCon,cardName, index) {
 
 
  } catch (error) {
-
     console.log(error);
-    browser.close();
  }  
     
 
