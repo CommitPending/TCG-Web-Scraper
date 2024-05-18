@@ -1,3 +1,4 @@
+// Dependencies
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 const pokemonList = require('./pokemonList');
@@ -6,39 +7,27 @@ require('dotenv').config();
 async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     let browser;
     try {
+        //const browser = await puppeteer.launch({ timeout: 90000}); For local use
 
-        // Uncomment for local use
-        //const browser = await puppeteer.launch({ timeout: 90000});
-
-
-        //For server use
-        browser = await puppeteer.launch({
+        const browser = await puppeteer.launch({
             executablePath: '/usr/bin/chromium-browser', 
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--disable-gpu'],
             timeout: 90000, 
-        });
+          }); //For server use
+      
 
-          // creates a new page within browser
-          const page = await browser.newPage();
-        
-          // turns on JS to begin scraping elements
-          await page.setJavaScriptEnabled(true);
-  
-          // sets idle to completion (set idle option here)
-          await page.goto(url, { waitUntil: 'networkidle0' });
+        const page = await browser.newPage();
 
+        await page.setJavaScriptEnabled(true);
+        await page.goto(url, { waitUntil: 'networkidle0' });
 
-        // Scrape all elemenets relevant to card price and condition and maps to a list 
         const [prices, cardCondition] = await Promise.all([
             page.$$eval('.listing-item__listing-data__info__price', elements => elements.map(element => element.textContent)),
             page.$$eval('a[href="https://help.tcgplayer.com/hc/en-us/articles/221430307-Card-Condition-Guide"]', elements => elements.map(element => element.textContent))
         ]);
 
-         // Gets rid of every dollar sign symbol
         const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
-
-        // Creates output for email and sets boolean flag to true to not spam
         for (let i = 0; i < numberPrices.length; i++) {
             if (!pokemonList[index].emailSent && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
                 console.log('A card was found under the desired price');
@@ -48,6 +37,8 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
                 break;
             }
         }
+
+        await browser.close();
     } catch (error) {
         console.error('Error during scraping:', error);
     } finally {
@@ -58,6 +49,7 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     }
 }
 
+// Sends email via env config files
 function sendEmail(to, subject, text) {
     const transporter = nodemailer.createTransport({
         service: 'outlook',
