@@ -1,3 +1,4 @@
+// Dependencies
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 const pokemonList = require('./pokemonList');
@@ -58,6 +59,7 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     }
 }
 
+// Sends email via env config files
 function sendEmail(to, subject, text) {
     const transporter = nodemailer.createTransport({
         service: 'outlook',
