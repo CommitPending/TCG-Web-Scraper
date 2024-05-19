@@ -11,9 +11,10 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
 
         const browser = await puppeteer.launch({
             executablePath: '/usr/bin/chromium-browser', 
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--disable-gpu'],
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--disable-gpu', '--single-process'],
+            userDataDir: '/tmp/puppeteer_user_data', // Store browser data in a temp directory
             timeout: 90000, 
-          }); //For server use
+        });
       
 
         const page = await browser.newPage();
@@ -90,8 +91,8 @@ async function runScrapingRandomly() {
     const { url, desiredPrice, cardCondition, cardName } = pokemonList[currentIndex];
 
     await scrapeAndCheck(url, desiredPrice, cardCondition, cardName, currentIndex);
-    console.log("Current index: ", currentIndex);
-    console.log("Current card: ", pokemonList[currentIndex]);
+   // console.log("Current index: ", currentIndex);
+    // console.log("Current card: ", pokemonList[currentIndex]);
 
     currentIndex = (currentIndex + 1) % pokemonList.length;
     runningBrowsers--;
