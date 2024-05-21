@@ -1,24 +1,26 @@
-// Dependencies
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 const pokemonList = require('./pokemonList');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     let browser;
+    const userDataDir = `/tmp/puppeteer_user_data_${index}`;
     try {
-        //const browser = await puppeteer.launch({ timeout: 90000}); For local use
-
-        const browser = await puppeteer.launch({
-            executablePath: '/usr/bin/chromium-browser', 
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--disable-gpu', '--single-process'],
-            userDataDir: '/tmp/puppeteer_user_data', // Store browser data in a temp directory
-            timeout: 90000, 
+        browser = await puppeteer.launch({
+            executablePath: '/usr/bin/chromium-browser',
+            args: [
+                '--no-sandbox', '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas',
+                '--disable-gpu', '--single-process'
+            ],
+            userDataDir: userDataDir,
+            timeout: 90000,
         });
-      
 
         const page = await browser.newPage();
-
         await page.setJavaScriptEnabled(true);
         await page.goto(url, { waitUntil: 'networkidle0' });
 
@@ -32,7 +34,11 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
         for (let i = 0; i < numberPrices.length; i++) {
             if (!pokemonList[index].emailSent && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
                 console.log('A card was found under the desired price');
-                sendEmail(process.env.SEND_EMAIL, `Price Alert - ${cardName} - $${desiredPrice}`, `The card ${cardName} is going for $${desiredPrice} on ${url}`);
+                sendEmail(
+                    process.env.SEND_EMAIL,
+                    `Price Alert - ${cardName} - $${desiredPrice}`,
+                    `The card ${cardName} is going for $${desiredPrice} on ${url}`
+                );
                 pokemonList[index].emailSent = true;
                 console.log("Email sent: ", pokemonList);
                 break;
@@ -43,14 +49,14 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     } catch (error) {
         console.error('Error during scraping:', error);
     } finally {
-        // Closes browser object
         if (browser) {
             await browser.close();
         }
+        // Clean up the user data directory
+        cleanUpUserDataDir(userDataDir);
     }
 }
 
-// Sends email via env config files
 function sendEmail(to, subject, text) {
     const transporter = nodemailer.createTransport({
         service: 'outlook',
@@ -76,6 +82,13 @@ function sendEmail(to, subject, text) {
     });
 }
 
+function cleanUpUserDataDir(dirPath) {
+    if (fs.existsSync(dirPath)) {
+        fs.rmdirSync(dirPath, { recursive: true });
+        console.log(`Cleaned up user data directory: ${dirPath}`);
+    }
+}
+
 let currentIndex = 0;
 const maxConcurrentBrowsers = 2;
 let runningBrowsers = 0;
@@ -91,9 +104,8 @@ async function runScrapingRandomly() {
     const { url, desiredPrice, cardCondition, cardName } = pokemonList[currentIndex];
 
     await scrapeAndCheck(url, desiredPrice, cardCondition, cardName, currentIndex);
-   // console.log("Current index: ", currentIndex);
-    // console.log("Current card: ", pokemonList[currentIndex]);
-
+    console.log("Current index: ", currentIndex);
+    console.log("Current card: ", pokemonList[currentIndex]);
     currentIndex = (currentIndex + 1) % pokemonList.length;
     runningBrowsers--;
 
