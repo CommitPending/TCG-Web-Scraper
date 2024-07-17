@@ -34,4 +34,10 @@ Replace your_bot_email@provider.com with the email address you want to use for s
 4. Execute the following command to start the price tracking:
    
       `node scraper.js`
-   
+
+
+
+Note: Look into pm2 for multiple nodes or clusters for multiple instance runs.
+
+
+Thanks :)
