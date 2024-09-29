@@ -1,0 +1,24 @@
+name: Run Card Scraper
+
+on:
+  schedule:
+    - cron: "0 * * * *"  # Runs every hour
+  
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm install
+      - name: Run scraper
+        run: node cardScraper.js
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SEND_EMAIL: ${{ secrets.SEND_EMAIL }}
