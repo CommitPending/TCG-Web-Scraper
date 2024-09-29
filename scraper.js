@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
-const pokemonList = require('./pokemonList');
+const cardList = require('./cardList');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -32,15 +32,15 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
         const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
         for (let i = 0; i < numberPrices.length; i++) {
-            if (!pokemonList[index].emailSent && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
+            if (!cardList[index].emailSent && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
                 console.log('A card was found under the desired price');
                 sendEmail(
                     process.env.SEND_EMAIL,
                     `Price Alert - ${cardName} - $${desiredPrice}`,
                     `The card ${cardName} is going for $${desiredPrice} on ${url}`
                 );
-                pokemonList[index].emailSent = true;
-                console.log("Email sent: ", pokemonList);
+                cardList[index].emailSent = true;
+                console.log("Email sent: ", cardList);
                 break;
             }
         }
