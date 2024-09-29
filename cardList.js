@@ -21,7 +21,7 @@ const cardList = [
         url: 'https://www.tcgplayer.com/product/88531/pokemon-skyridge-raikou-h26?Condition=Lightly+Played&Language=English&page=1',
         cardCondition: 'Lightly Played Holofoil',
         lanuage: 'English',
-        desiredPrice: 200,
+        desiredPrice: 230,
         emailSent: false
     },
     {
