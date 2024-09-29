@@ -98,4 +98,4 @@ const cardList = [
     }
 ];
 
-module.exports = pokemonList;
+module.exports = cardList;
