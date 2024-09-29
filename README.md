@@ -27,7 +27,7 @@ This project is a trading card price tracker built using Node.js. It periodicall
 
     `SEND_EMAIL=your_target_email@provider.com`
 
-Replace your_bot_email@provider.com with the email address you want to use for sending notifications, your_email_password with the password of that email account, and your_target_email@provider.com with the email address where you want to receive notifications.
+Replace your_bot_email@provider.com with the email address you want to use for sending notifications, your_email_password with the bot email password of that email account, and your_target_email@provider.com with the email address where you want to receive notifications.
 
 **Run the Project**
 
