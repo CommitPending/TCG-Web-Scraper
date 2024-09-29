@@ -1,8 +1,8 @@
-**Pokémon Card Price Tracker**
+**TCG WEB SCRAPER**
 
 **Description:**
 
-This project is a Pokémon card price tracker built using Node.js. It periodically scrapes prices of specific Pokémon cards from TCGPlayer and sends an email notification if the price drops below a desired threshold.
+This project is a trading card price tracker built using Node.js. It periodically scrapes prices of specific cards from TCGPlayer and sends an email notification if the price drops below a desired threshold. It can be used for any card listed on TCGPlayer, not just Pokémon cards
 
 
 **Setup Instructions:**
