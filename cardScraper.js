@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config();
 
 // Global timeout (5 hours 55 minutes = 355 minutes = 21300 seconds)
-const timeoutDuration = 60000; // 1 minute timeout for testing
+const timeoutDuration = 5 * 60 * 60 * 1000 + 55 * 60 * 1000; // 5 hours and 55 minutes
 const globalTimeout = setTimeout(() => {
     console.log("Timeout reached, exiting gracefully.");
     process.exit(0); // Exit the script with success code
