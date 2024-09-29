@@ -1,16 +1,13 @@
 name: Run Card Scraper
 
-# Triggers the workflow on push to the main branch and on a schedule
 on:
-  push:
-    branches:
-      - main  # Change to your default branch name if different
   schedule:
-    - cron: "0 * * * *"  # Runs every hour (adjust this cron expression to your preference)
+    - cron: "0 */8 * * *"  # Runs every 8 hours
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 355  # Set the maximum runtime to 6 hours (360 minutes)
 
     steps:
       - name: Checkout repository
@@ -19,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'  # Specify your Node.js version
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
