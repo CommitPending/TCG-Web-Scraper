@@ -5,6 +5,13 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+// Global timeout (5 hours 55 minutes = 355 minutes = 21300 seconds)
+const timeoutDuration = 5 * 60 * 60 * 1000 + 55 * 60 * 1000; // in milliseconds
+const globalTimeout = setTimeout(() => {
+    console.log("Timeout reached, exiting gracefully.");
+    process.exit(0); // Exit the script with success code
+}, timeoutDuration);
+
 async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     let browser;
     const userDataDir = `/tmp/puppeteer_user_data_${index}`;
@@ -112,4 +119,5 @@ async function runScrapingRandomly() {
     setTimeout(runScrapingRandomly, randomInterval);
 }
 
+// Start the scraping process
 runScrapingRandomly();
