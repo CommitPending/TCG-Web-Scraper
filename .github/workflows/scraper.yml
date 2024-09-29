@@ -7,7 +7,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 355  # Set the maximum runtime to 6 hours (360 minutes)
+    #timeout-minutes: 355  # Set the maximum runtime to 6 hours (360 minutes)
 
     steps:
       - name: Checkout repository
