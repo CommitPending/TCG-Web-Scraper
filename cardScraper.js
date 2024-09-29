@@ -101,12 +101,12 @@ async function runScrapingRandomly() {
 
     runningBrowsers++;
     const randomInterval = Math.floor(Math.random() * (45 - 15 + 1) + 15) * 1000;
-    const { url, desiredPrice, cardCondition, cardName } = pokemonList[currentIndex];
+    const { url, desiredPrice, cardCondition, cardName } = cardList[currentIndex];
 
     await scrapeAndCheck(url, desiredPrice, cardCondition, cardName, currentIndex);
     console.log("Current index: ", currentIndex);
-    console.log("Current card: ", pokemonList[currentIndex]);
-    currentIndex = (currentIndex + 1) % pokemonList.length;
+    console.log("Current card: ", cardList[currentIndex]);
+    currentIndex = (currentIndex + 1) % cardList.length;
     runningBrowsers--;
 
     setTimeout(runScrapingRandomly, randomInterval);
