@@ -25,8 +25,9 @@ jobs:
         run: npm install
 
       - name: Run card scraper
-        run: node cardScraper.js
+        run: node index.js
         env:
+          CI: 'true'
           BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           SEND_EMAIL: ${{ secrets.SEND_EMAIL }}

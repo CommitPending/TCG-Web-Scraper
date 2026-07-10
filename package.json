@@ -7,6 +7,7 @@
     "react-dom": "^18.3.1"
   },
   "scripts": {
-    "start": "node cardScraper.js"
+    "start": "node index.js",
+    "start:local": "node index.js"
   }
 }
