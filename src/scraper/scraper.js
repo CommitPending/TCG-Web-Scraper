@@ -20,7 +20,7 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
             page.$$eval('.listing-item__listing-data__info__price', elements =>
                 elements.map(element => element.textContent.trim())
             ),
-            page.$$eval('.listing-item__listing-data__condition a', elements =>
+            page.$$eval('.listing-item__listing-data__info__condition a', elements =>
                 elements.map(element => element.textContent.trim())
             )
         ]);
@@ -28,6 +28,12 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
         const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
         console.log(`Prices found: ${numberPrices.join(', ')} | Conditions: ${cardCondition.join(', ')}`);
+
+        const listings = numberPrices.map((price, i) => ({
+            price,
+            condition: cardCondition[i] || null,
+        }));
+        console.log(`LISTINGS_JSON:${JSON.stringify(listings)}`);
 
         if (numberPrices.length === 0) {
             console.log('WARNING: No prices found - page may not have loaded correctly or selectors are outdated');

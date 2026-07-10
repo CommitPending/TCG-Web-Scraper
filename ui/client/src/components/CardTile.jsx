@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 function IconCheck() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -16,7 +18,10 @@ function IconLink() {
   );
 }
 
+const PAGE_SIZE = 5;
+
 export default function CardTile({ card }) {
+  const [listingPage, setListingPage] = useState(0);
   const statusColor = {
     idle: 'var(--text-muted)',
     checked: '#38bdf8',
@@ -122,6 +127,74 @@ export default function CardTile({ card }) {
           <span style={{ fontSize: '11px', opacity: 0.7 }}>Notified</span>
         )}
       </div>
+
+      {card.listings && card.listings.length > 0 && (() => {
+        const totalPages = Math.ceil(card.listings.length / PAGE_SIZE);
+        const paginated = card.listings.slice(listingPage * PAGE_SIZE, (listingPage + 1) * PAGE_SIZE);
+        return (
+          <div style={{ fontSize: '12px' }}>
+            <div style={{
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              fontSize: '10px',
+              marginBottom: '6px',
+            }}>
+              Current Listings ({card.listings.length})
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {paginated.map((l, i) => {
+                const underTarget = l.price <= card.desiredPrice;
+                return (
+                  <div key={i} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: underTarget ? 'rgba(34,197,94,0.07)' : 'var(--surface2)',
+                    border: `1px solid ${underTarget ? 'rgba(34,197,94,0.25)' : 'var(--border)'}`,
+                    borderRadius: '6px',
+                    padding: '5px 10px',
+                  }}>
+                    <span style={{ color: 'var(--text-dim)' }}>{l.condition || '—'}</span>
+                    <span style={{
+                      fontWeight: 700,
+                      color: underTarget ? 'var(--green)' : 'var(--text)',
+                    }}>
+                      ${l.price.toFixed(2)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            {totalPages > 1 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                <button
+                  onClick={() => setListingPage(p => Math.max(0, p - 1))}
+                  disabled={listingPage === 0}
+                  style={{
+                    background: 'none', border: '1px solid var(--border)', color: 'var(--text-muted)',
+                    borderRadius: '4px', padding: '2px 10px', cursor: listingPage === 0 ? 'default' : 'pointer',
+                    opacity: listingPage === 0 ? 0.3 : 1, fontSize: '12px',
+                  }}
+                >‹</button>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+                  {listingPage + 1} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setListingPage(p => Math.min(totalPages - 1, p + 1))}
+                  disabled={listingPage === totalPages - 1}
+                  style={{
+                    background: 'none', border: '1px solid var(--border)', color: 'var(--text-muted)',
+                    borderRadius: '4px', padding: '2px 10px', cursor: listingPage === totalPages - 1 ? 'default' : 'pointer',
+                    opacity: listingPage === totalPages - 1 ? 0.3 : 1, fontSize: '12px',
+                  }}
+                >›</button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <a
         href={card.url}

@@ -34,6 +34,7 @@ const state = cardList.map((card, i) => ({
     emailSent: false,
     status: 'idle',
     imageUrl: getImageUrl(card.url),
+    listings: [],
 }));
 
 let scraperProcess = null;
@@ -69,6 +70,20 @@ function parseScraperLog(rawLine) {
         if (match && pendingIndex !== null && state[pendingIndex]) {
             state[pendingIndex].lastPrice = parseFloat(match[1].replace(',', ''));
         }
+    }
+
+    if (line.includes('LISTINGS_JSON:')) {
+        try {
+            const json = line.split('LISTINGS_JSON:')[1];
+            const listings = JSON.parse(json);
+            if (pendingIndex !== null && state[pendingIndex]) {
+                state[pendingIndex].listings = listings;
+                if (listings.length > 0) {
+                    state[pendingIndex].lastPrice = listings[0].price;
+                }
+                broadcast({ type: 'listings', index: pendingIndex, listings });
+            }
+        } catch (_) {}
     }
 
     if (line.includes('A card was found under the desired price')) {

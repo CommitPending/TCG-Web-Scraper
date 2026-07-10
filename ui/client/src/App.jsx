@@ -50,6 +50,10 @@ export default function App() {
         appendLog(`Checked: ${data.card.cardName}`, 'info');
       }
 
+      if (data.type === 'listings') {
+        setCards(prev => prev.map((c, i) => i === data.index ? { ...c, listings: data.listings } : c));
+      }
+
       if (data.type === 'alert') {
         if (data.totalAlerts != null) setAlerts(data.totalAlerts);
         appendLog(data.message, 'alert');
