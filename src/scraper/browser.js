@@ -1,8 +1,13 @@
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-puppeteer.use(StealthPlugin());
-
 const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+
+let puppeteer;
+if (isCI) {
+    puppeteer = require('puppeteer-core');
+} else {
+    puppeteer = require('puppeteer-extra');
+    const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+    puppeteer.use(StealthPlugin());
+}
 
 async function launchBrowser(index) {
     const userDataDir = isCI

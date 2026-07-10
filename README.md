@@ -49,14 +49,18 @@ npm install
 Create a `.env` file in the project root:
 
 ```
-BOT_EMAIL=your_bot_email@provider.com
-EMAIL_PASSWORD=your_email_password
-SEND_EMAIL=your_target_email@provider.com
+BOT_EMAIL=your_brevo_smtp_login@smtp-brevo.com
+EMAIL_PASSWORD=your_brevo_smtp_key
+FROM_EMAIL=your_verified_sender@example.com
+SEND_EMAIL=your_target_email@example.com
 ```
 
-- `BOT_EMAIL` — the email account used to send alerts
-- `EMAIL_PASSWORD` — password for the bot email account
-- `SEND_EMAIL` — where to send the price alert notifications
+- `BOT_EMAIL` — Brevo SMTP login (found in Brevo dashboard → your name → SMTP & API → SMTP tab, looks like `xxxxxxxx@smtp-brevo.com`)
+- `EMAIL_PASSWORD` — Brevo SMTP key (generate one in the same SMTP tab, starts with `xkeysib-...`)
+- `FROM_EMAIL` — a sender email you've verified in Brevo (Brevo → Senders & IP → Senders)
+- `SEND_EMAIL` — where to send price alert notifications
+
+> **Email provider:** This project uses [Brevo](https://brevo.com) (free tier: 300 emails/day). Gmail and Outlook SMTP are not supported due to authentication restrictions.
 
 ---
 
@@ -80,7 +84,14 @@ npm start
 
 ### GitHub Actions (CI)
 
-The workflow runs automatically every 8 hours via `.github/workflows/scraper.yml`. Set `BOT_EMAIL`, `EMAIL_PASSWORD`, and `SEND_EMAIL` as repository secrets in GitHub Settings → Secrets.
+The workflow runs automatically every 8 hours via `.github/workflows/scraper.yml`. Set the following as repository secrets in **GitHub → Settings → Secrets and variables → Actions**:
+
+- `BOT_EMAIL`
+- `EMAIL_PASSWORD`
+- `FROM_EMAIL`
+- `SEND_EMAIL`
+
+> In CI, the stealth plugin is disabled and plain `puppeteer-core` is used with the system Chromium (`/usr/bin/chromium-browser`) to avoid compatibility issues.
 
 ---
 

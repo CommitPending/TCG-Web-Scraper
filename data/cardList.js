@@ -13,7 +13,7 @@ const cardList = [
         url: 'https://www.tcgplayer.com/product/88674/pokemon-hidden-legends-regirock-ex?Condition=Lightly+Played&Language=English&page=1',
         cardCondition: 'Lightly Played Holofoil',
         lanuage: 'English',
-        desiredPrice: 100,
+        desiredPrice: 150,
         emailSent: false
     }
 ];
