@@ -10,6 +10,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    environment: production
     #timeout-minutes: 355  # Set the maximum runtime to 6 hours (360 minutes)
 
     steps:

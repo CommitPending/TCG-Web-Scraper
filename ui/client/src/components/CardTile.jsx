@@ -47,7 +47,7 @@ export default function CardTile({ card }) {
       background: 'var(--surface)',
       border: `1px solid ${card.emailSent ? 'rgba(34,197,94,0.35)' : 'var(--border)'}`,
       borderRadius: '12px',
-      padding: '16px',
+      padding: '22px',
       display: 'flex',
       flexDirection: 'column',
       gap: '12px',
@@ -59,8 +59,8 @@ export default function CardTile({ card }) {
           <img
             src={card.imageUrl}
             alt={card.cardName}
-            width={90}
-            height={126}
+            width={110}
+            height={154}
             style={{
               borderRadius: '8px',
               objectFit: 'cover',
@@ -73,7 +73,7 @@ export default function CardTile({ card }) {
         )}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-            <div style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.4 }}>
+            <div style={{ fontWeight: 700, fontSize: '17px', lineHeight: 1.4 }}>
               {card.cardName}
             </div>
             <span style={{
@@ -242,7 +242,7 @@ function Metric({ label, value, highlight, small }) {
       padding: '10px 12px',
     }}>
       <div style={{
-        fontSize: small ? '12px' : '20px',
+        fontSize: small ? '13px' : '22px',
         fontWeight: small ? 400 : 700,
         color: highlight || 'var(--text)',
         lineHeight: 1.2,
