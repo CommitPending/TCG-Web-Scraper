@@ -1,4 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 
 const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
 
@@ -7,19 +9,23 @@ async function launchBrowser(index) {
         ? `/tmp/puppeteer_user_data_${index}`
         : `./tmp/puppeteer_user_data_${index}`;
 
+    const ciArgs = [
+        '--no-sandbox', '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas',
+        '--disable-gpu', '--single-process'
+    ];
+
+    const localArgs = [
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu'
+    ];
+
     const launchOptions = {
-        args: [
-            '--no-sandbox', '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas',
-            '--disable-gpu', '--single-process'
-        ],
+        args: isCI ? ciArgs : localArgs,
         userDataDir: userDataDir,
         timeout: 90000,
+        executablePath: isCI ? '/usr/bin/chromium-browser' : puppeteer.executablePath(),
     };
-
-    if (isCI) {
-        launchOptions.executablePath = '/usr/bin/chromium-browser';
-    }
 
     const browser = await puppeteer.launch(launchOptions);
     return { browser, userDataDir };

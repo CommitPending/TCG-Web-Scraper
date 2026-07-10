@@ -24,8 +24,7 @@ async function runScrapingRandomly() {
     const { url, desiredPrice, cardCondition, cardName } = cardList[currentIndex];
 
     await scrapeAndCheck(url, desiredPrice, cardCondition, cardName, currentIndex);
-    console.log("Current index: ", currentIndex);
-    console.log("Current card: ", cardList[currentIndex]);
+    console.log("Checked: ", cardList[currentIndex].cardName);
     currentIndex = (currentIndex + 1) % cardList.length;
     runningBrowsers--;
 

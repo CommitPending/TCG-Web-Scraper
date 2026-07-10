@@ -9,6 +9,8 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
     try {
         ({ browser, userDataDir } = await launchBrowser(index));
 
+        console.log(`Current index: ${index}`);
+
         const page = await browser.newPage();
         await page.setJavaScriptEnabled(true);
         await page.goto(url, { waitUntil: 'networkidle0' });
@@ -17,23 +19,33 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
             page.$$eval('.listing-item__listing-data__info__price', elements =>
                 elements.map(element => element.textContent.trim())
             ),
-            page.$$eval('a[href="https://help.tcgplayer.com/hc/en-us/articles/221430307-Card-Condition-Guide"]', elements =>
+            page.$$eval('.listing-item__listing-data__condition a', elements =>
                 elements.map(element => element.textContent.trim())
             )
         ]);
 
         const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
 
+        console.log(`Prices found: ${numberPrices.join(', ')} | Conditions: ${cardCondition.join(', ')}`);
+
+        if (numberPrices.length === 0) {
+            console.log('WARNING: No prices found - page may not have loaded correctly or selectors are outdated');
+        }
+        if (cardCondition.length === 0) {
+            console.log('WARNING: No conditions found - condition selector may be outdated');
+        }
+
         for (let i = 0; i < numberPrices.length; i++) {
-            if (!cardList[index].emailSent && numberPrices[i] <= desiredPrice && cardCondition[i] === cardCon) {
-                console.log('A card was found under the desired price');
+            const conditionMatch = cardCondition.length === 0 || cardCondition[i] === cardCon;
+            if (!cardList[index].emailSent && numberPrices[i] <= desiredPrice && conditionMatch) {
+                console.log(`A card was found under the desired price: ${cardName} at $${numberPrices[i]}`);
                 sendEmail(
                     process.env.SEND_EMAIL,
-                    `Price Alert - ${cardName} - $${desiredPrice}`,
+                    `Price Alert - ${cardName} - $${numberPrices[i]}`,
                     `The card ${cardName} is going for $${numberPrices[i]} on ${url}`
                 );
                 cardList[index].emailSent = true;
-                console.log("Email sent for: ", cardList[index]);
+                console.log(`Email sent for: ${cardName}`);
                 break;
             }
         }

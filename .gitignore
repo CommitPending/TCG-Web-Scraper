@@ -2,3 +2,4 @@ txt.txt
 .env
 node_modules/
 tmp/
+ui/node_modules/

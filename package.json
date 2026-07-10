@@ -1,13 +1,19 @@
 {
   "dependencies": {
     "dotenv": "^16.4.5",
-    "nodemailer": "^6.9.13",
-    "puppeteer": "^22.15.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "nodemailer": "^9.0.3",
+    "puppeteer": "^24.43.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "scripts": {
     "start": "node index.js",
     "start:local": "node index.js"
+  },
+  "overrides": {
+    "basic-ftp": "^6.0.1",
+    "tar-fs": "^3.1.3",
+    "ws": "^8.21.0",
+    "js-yaml": "^4.1.0"
   }
 }
