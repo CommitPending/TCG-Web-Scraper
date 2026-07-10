@@ -10,10 +10,11 @@ const typeStyle = {
 };
 
 export default function LogFeed({ logs }) {
-  const bottomRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = containerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [logs]);
 
   return (
@@ -28,7 +29,7 @@ export default function LogFeed({ logs }) {
       }}>
         Live Log
       </h2>
-      <div style={{
+      <div ref={containerRef} style={{
         background: 'var(--surface)',
         border: '1px solid var(--border)',
         borderRadius: '12px',
@@ -57,7 +58,6 @@ export default function LogFeed({ logs }) {
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
             )
         ]);
 
-        const numberPrices = prices.map(price => parseFloat(price.replace('$', '')));
+        const numberPrices = prices.map(price => parseFloat(price.replace('$', '').replace(/,/g, '')));
 
         console.log(`Prices found: ${numberPrices.join(', ')} | Conditions: ${cardCondition.join(', ')}`);
 
