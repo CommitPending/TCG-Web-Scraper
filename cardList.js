@@ -13,7 +13,7 @@ const cardList = [
         url: 'https://www.tcgplayer.com/product/88674/pokemon-hidden-legends-regirock-ex?Condition=Lightly+Played&Language=English&page=1',
         cardCondition: 'Lightly Played Holofoil',
         lanuage: 'English',
-        desiredPrice: 30,
+        desiredPrice: 900,
         emailSent: false
     },
     {
@@ -53,7 +53,7 @@ const cardList = [
         url: 'https://www.tcgplayer.com/product/84141/pokemon-neo-revelation-celebi-3?Condition=Lightly+Played&Language=English&page=1&Printing=1st+Edition+Holofoil',
         cardCondition: 'Lightly Played 1st Edition Holofoil',
         lanuage: 'English',
-        desiredPrice: 1,
+        desiredPrice: 100,
         emailSent: false
     },
     {
