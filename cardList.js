@@ -53,7 +53,7 @@ const cardList = [
         url: 'https://www.tcgplayer.com/product/84141/pokemon-neo-revelation-celebi-3?Condition=Lightly+Played&Language=English&page=1&Printing=1st+Edition+Holofoil',
         cardCondition: 'Lightly Played 1st Edition Holofoil',
         lanuage: 'English',
-        desiredPrice: 100,
+        desiredPrice: 1,
         emailSent: false
     },
     {
