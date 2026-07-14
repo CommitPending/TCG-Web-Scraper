@@ -46,6 +46,7 @@ function broadcast(data) {
 }
 
 let pendingIndex = null;
+let scraperOutputBuffer = '';
 
 function parseScraperLog(rawLine) {
     const line = stripAnsi(rawLine);
@@ -90,17 +91,16 @@ function parseScraperLog(rawLine) {
         totalAlerts += 1;
         broadcast({ type: 'alert', message: line, totalRuns, totalAlerts });
     }
-    if (line.includes('Email sent for:')) {
-        const match = line.match(/Email sent for:\s*(.+)/);
-        if (match) {
-            const cardName = match[1].trim();
-            const idx = state.findIndex(c => c.cardName === cardName);
-            if (idx !== -1) {
-                state[idx].emailSent = true;
-                state[idx].status = 'alerted';
-                broadcast({ type: 'emailSent', index: idx, card: state[idx] });
+    if (line.includes('EMAIL_SENT_JSON:')) {
+        try {
+            const json = line.split('EMAIL_SENT_JSON:')[1];
+            const { index } = JSON.parse(json);
+            if (Number.isInteger(index) && state[index]) {
+                state[index].emailSent = true;
+                state[index].status = 'alerted';
+                broadcast({ type: 'emailSent', index, card: state[index] });
             }
-        }
+        } catch (_) {}
     }
     if (line.includes('Error during scraping:')) {
         broadcast({ type: 'error', message: stripAnsi(rawLine) });
@@ -114,11 +114,16 @@ function startScraper() {
     scraperProcess = spawn('node', [entryPoint], {
         cwd: path.resolve(__dirname, '..'),
         env: { ...process.env },
+        detached: true,
     });
 
+    scraperOutputBuffer = '';
     scraperProcess.stdout.on('data', (data) => {
-        const lines = data.toString().split('\n').filter(Boolean);
-        lines.forEach(line => {
+        scraperOutputBuffer += data.toString();
+        const lines = scraperOutputBuffer.split(/\r?\n/);
+        scraperOutputBuffer = lines.pop();
+
+        lines.filter(Boolean).forEach(line => {
             console.log('[scraper]', line);
             parseScraperLog(line);
             broadcast({ type: 'log', message: stripAnsi(line) });
@@ -143,7 +148,11 @@ function startScraper() {
 
 function stopScraper() {
     if (!scraperProcess) return { stopped: false, message: 'Scraper not running' };
-    scraperProcess.kill();
+    try {
+        process.kill(-scraperProcess.pid, 'SIGKILL');
+    } catch (_) {
+        scraperProcess.kill('SIGKILL');
+    }
     scraperProcess = null;
     return { stopped: true };
 }

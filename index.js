@@ -2,13 +2,6 @@ require('dotenv').config();
 const { scrapeAndCheck } = require('./src/scraper/scraper');
 const cardList = require('./data/cardList');
 
-// Global timeout (5 hours 55 minutes)
-const timeoutDuration = 5 * 60 * 60 * 1000 + 55 * 60 * 1000;
-const globalTimeout = setTimeout(() => {
-    console.log("Timeout reached, exiting gracefully.");
-    process.exit(0);
-}, timeoutDuration);
-
 let currentIndex = 0;
 const maxConcurrentBrowsers = 2;
 let runningBrowsers = 0;

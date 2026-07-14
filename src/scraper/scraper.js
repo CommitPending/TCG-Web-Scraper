@@ -46,13 +46,13 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
             const conditionMatch = cardCondition.length === 0 || cardCondition[i] === cardCon;
             if (!cardList[index].emailSent && numberPrices[i] <= desiredPrice && conditionMatch) {
                 console.log(`A card was found under the desired price: ${cardName} at $${numberPrices[i]}`);
-                sendEmail(
+                await sendEmail(
                     process.env.SEND_EMAIL,
                     `Price Alert - ${cardName} - $${numberPrices[i]}`,
                     `The card ${cardName} is going for $${numberPrices[i]} on ${url}`
                 );
                 cardList[index].emailSent = true;
-                console.log(`Email sent for: ${cardName}`);
+                console.log(`EMAIL_SENT_JSON:${JSON.stringify({ index, cardName })}`);
                 break;
             }
         }
