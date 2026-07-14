@@ -1,5 +1,6 @@
 const { launchBrowser } = require('./browser');
 const { sendEmail } = require('../email/mailer');
+const { sendNtfyNotification } = require('../notifications/ntfy');
 const { cleanUpUserDataDir } = require('../utils/cleanup');
 const cardList = require('../../data/cardList');
 
@@ -53,6 +54,12 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
                 );
                 cardList[index].emailSent = true;
                 console.log(`EMAIL_SENT_JSON:${JSON.stringify({ index, cardName })}`);
+                try {
+                    await sendNtfyNotification({ cardName, price: numberPrices[i], url });
+                    console.log(`NTFY_SENT_JSON:${JSON.stringify({ index, cardName })}`);
+                } catch (notificationError) {
+                    console.error('Error sending ntfy notification:', notificationError.message);
+                }
                 break;
             }
         }

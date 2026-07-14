@@ -33,3 +33,4 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           SEND_EMAIL: ${{ secrets.SEND_EMAIL }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
