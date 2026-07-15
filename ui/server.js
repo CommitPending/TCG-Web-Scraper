@@ -52,6 +52,21 @@ function parseScraperLog(rawLine) {
     const line = stripAnsi(rawLine);
 
     if (line.includes('Current index:')) {
+        // DEBUG: Log card index and name on scrape start
+        if (line.includes('Current index:')) {
+    const match = line.match(/Current index:\s*(\d+)/);
+    if (match) {
+        const idx = parseInt(match[1], 10);
+        pendingIndex = idx;
+        if (state[idx]) {
+            state[idx].runCount += 1;
+            state[idx].lastChecked = new Date().toISOString();
+            state[idx].status = 'checked';
+            totalRuns += 1;
+            broadcast({ type: 'run', index: idx, card: state[idx], totalRuns, totalAlerts });
+        }
+    }
+}
         const match = line.match(/Current index:\s*(\d+)/);
         if (match) {
             pendingIndex = parseInt(match[1], 10);
@@ -74,6 +89,10 @@ function parseScraperLog(rawLine) {
     }
 
     if (line.includes('LISTINGS_JSON:')) {
+        // DEBUG: Log card index, name, and listings
+        if (pendingIndex !== null && state[pendingIndex]) {
+            console.log(`[DEBUG] [listings] index=${pendingIndex} cardName="${state[pendingIndex].cardName}" listings=`, line.split('LISTINGS_JSON:')[1]);
+        }
         try {
             const json = line.split('LISTINGS_JSON:')[1];
             const listings = JSON.parse(json);
@@ -92,6 +111,15 @@ function parseScraperLog(rawLine) {
         broadcast({ type: 'alert', message: line, totalRuns, totalAlerts });
     }
     if (line.includes('EMAIL_SENT_JSON:')) {
+        // DEBUG: Log card index and name when email is sent
+        try {
+            const json = line.split('EMAIL_SENT_JSON:')[1];
+            const { index } = JSON.parse(json);
+            if (Number.isInteger(index) && state[index]) {
+                console.log(`[DEBUG] [emailSent] index=${index} cardName="${state[index].cardName}"`);
+            }
+        } catch (_) {}
+
         try {
             const json = line.split('EMAIL_SENT_JSON:')[1];
             const { index } = JSON.parse(json);

@@ -43,8 +43,11 @@ async function scrapeAndCheck(url, desiredPrice, cardCon, cardName, index) {
             console.log('WARNING: No conditions found - condition selector may be outdated');
         }
 
+        const normalizeCondition = (condition) =>
+            condition.replace(/1st Edition\s*/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
+
         for (let i = 0; i < numberPrices.length; i++) {
-            const conditionMatch = cardCondition.length === 0 || cardCondition[i] === cardCon;
+            const conditionMatch = cardCondition.length === 0 || normalizeCondition(cardCondition[i]) === normalizeCondition(cardCon);
             if (!cardList[index].emailSent && numberPrices[i] <= desiredPrice && conditionMatch) {
                 console.log(`A card was found under the desired price: ${cardName} at $${numberPrices[i]}`);
                 await sendEmail(
